@@ -2,6 +2,21 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), versionado semver.
 
+## [0.4.0] — 2026-04-20
+
+### Changed
+
+- **Botón flotante ahora se renderiza ARRIBA-DERECHA por defecto** (antes
+  era abajo-derecha). Motivo: los CTAs de MeLi ("Comprar ahora", "Agregar
+  al carrito") viven abajo-derecha y nuestro botón los tapaba. Arriba queda
+  libre y más visible.
+- El `buttonPosition` del preferences schema ahora soporta `top` y
+  `bottom` (mutuamente exclusivos). Default nuevo: `{ top: 88, right: 24 }`.
+- Menú desplegable y toasts inline ahora se anclan automáticamente debajo
+  del botón si está arriba (antes siempre aparecían arriba del botón).
+- `mountFab` devuelve el `anchor: "top" | "bottom"` para que los otros
+  componentes del content-script sepan cómo posicionarse.
+
 ## [0.3.0] — 2026-04-20
 
 ### Changed

@@ -76,6 +76,7 @@ async function setupForMeliPage() {
   let open = false;
 
   const fab = mountFab({
+    top: prefs.buttonPosition.top,
     bottom: prefs.buttonPosition.bottom,
     right: prefs.buttonPosition.right,
     onClick: (ev) => {
@@ -90,12 +91,13 @@ async function setupForMeliPage() {
   const menu = mountMenu(shadowRoot, {
     tools,
     extensionVersion: EXT_VERSION,
+    anchor: fab.anchor,
     onPickTool: (toolId) => {
       // Cerramos el menú al clickear una tool (UX: el feedback viene después)
       open = false;
       fab.setOpen(false);
       menu.setOpen(false);
-      void handleToolClick(toolId, shadowRoot);
+      void handleToolClick(toolId, shadowRoot, fab.anchor);
     },
     onOpenOptions: () => {
       open = false;
@@ -135,12 +137,17 @@ async function setupForMeliPage() {
   mounted = true;
 }
 
-async function handleToolClick(toolId: string, shadowRoot: ShadowRoot) {
+async function handleToolClick(
+  toolId: string,
+  shadowRoot: ShadowRoot,
+  anchor: "top" | "bottom" = "bottom",
+) {
   const tool = getTool(toolId);
   if (!tool) {
     showToast(shadowRoot, {
       kind: "error",
       message: `Herramienta "${toolId}" no encontrada.`,
+      anchor,
     });
     return;
   }
@@ -153,6 +160,7 @@ async function handleToolClick(toolId: string, shadowRoot: ShadowRoot) {
       message:
         "No pudimos leer los datos de esta publicación. ¿Es una PDP válida? Si el problema persiste, activá Modo debug en la configuración para ver qué campos fallaron.",
       durationMs: 7000,
+      anchor,
     });
     return;
   }
@@ -189,6 +197,7 @@ async function handleToolClick(toolId: string, shadowRoot: ShadowRoot) {
     kind: "info",
     message: `Abriendo ${tool.label}…`,
     durationMs: 2500,
+    anchor,
   });
 
   try {
@@ -208,12 +217,14 @@ async function handleToolClick(toolId: string, shadowRoot: ShadowRoot) {
       showToast(shadowRoot, {
         kind: "error",
         message: res.error || "No se pudo abrir la herramienta.",
+        anchor,
       });
     }
   } catch (err) {
     showToast(shadowRoot, {
       kind: "error",
       message: err instanceof Error ? err.message : "Error inesperado.",
+      anchor,
     });
   }
 }

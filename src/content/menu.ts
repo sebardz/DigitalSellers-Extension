@@ -12,6 +12,8 @@ export interface MenuOptions {
   onPickTool: (toolId: string) => void;
   onOpenOptions: () => void;
   extensionVersion: string;
+  /** "top" = el botón está arriba → menú se renderiza debajo del botón. */
+  anchor?: "top" | "bottom";
 }
 
 export function mountMenu(
@@ -22,6 +24,7 @@ export function mountMenu(
   menu.className = "dsh-menu";
   menu.setAttribute("role", "menu");
   menu.setAttribute("aria-label", "Herramientas DigitalSellers");
+  menu.setAttribute("data-anchor", opts.anchor ?? "bottom");
 
   // Header
   const header = document.createElement("div");

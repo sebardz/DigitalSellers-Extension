@@ -26,12 +26,23 @@ export interface BaseScrapedPayload {
   catalogProductId?: string;
 }
 
+/**
+ * Posición del botón flotante. Usamos `top` para anclarlo arriba-derecha
+ * (default). Si el user lo arrastra al fondo podemos usar `bottom` en
+ * el futuro — por eso ambos son opcionales y mutuamente exclusivos.
+ */
+export interface ButtonPosition {
+  top?: number;
+  bottom?: number;
+  right: number;
+}
+
 /** Opciones guardadas en chrome.storage.sync del user. */
 export interface UserPreferences {
   /** Tool default (click directo al botón sin menú). */
   defaultToolId: string | null;
   /** Posición del botón flotante. */
-  buttonPosition: { bottom: number; right: number };
+  buttonPosition: ButtonPosition;
   /** Forzar tema dark/light. null = seguir al sistema. */
   theme: "dark" | "light" | null;
   /** ¿Mandar telemetría anónima? (opt-in). */
@@ -48,7 +59,9 @@ export interface UserPreferences {
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
   defaultToolId: null,
-  buttonPosition: { bottom: 24, right: 24 },
+  // Arriba-derecha para evitar tapar los CTAs de MeLi ("Comprar ahora",
+  // "Agregar al carrito") que viven abajo-derecha en la PDP.
+  buttonPosition: { top: 88, right: 24 },
   theme: null,
   telemetry: true,
   enabled: true,

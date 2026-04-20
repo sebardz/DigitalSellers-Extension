@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "DigitalSellers Hub",
   "short_name": "DS Hub",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Generá packs visuales, calculá ganancias y optimizá tus publicaciones de MercadoLibre con un solo click.",
   "homepage_url": "https://analyzer.digitalsellers.com.ar",
   "icons": {

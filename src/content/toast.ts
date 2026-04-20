@@ -10,6 +10,8 @@ export interface ToastOptions {
   message: string;
   /** Tiempo hasta auto-dismiss en ms. null = no auto-cierra. */
   durationMs?: number | null;
+  /** "top" = el botón está arriba → toast se renderiza debajo del botón. */
+  anchor?: "top" | "bottom";
 }
 
 export function showToast(
@@ -22,6 +24,7 @@ export function showToast(
   const div = document.createElement("div");
   div.className = `dsh-toast dsh-toast--${opts.kind}`;
   div.setAttribute("role", opts.kind === "error" ? "alert" : "status");
+  div.setAttribute("data-anchor", opts.anchor ?? "bottom");
   div.textContent = opts.message;
   shadowRoot.appendChild(div);
 
