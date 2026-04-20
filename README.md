@@ -2,32 +2,43 @@
 
 > Botón flotante inyectado en MercadoLibre que genera packs visuales, videos y más herramientas DS **con un solo click**. Sin copy-paste. Sin depender de la API pública de MeLi.
 
-## ✨ Qué hace
+[![Release](https://img.shields.io/github/v/release/sebardz/DigitalSellers-Extension?label=última%20versión&style=flat-square)](../../releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/sebardz/DigitalSellers-Extension/total?style=flat-square)](../../releases)
 
-Cuando estás en una publicación de MeLi, te aparece un botón flotante. Lo apretás, se abre un menú con las tools del ecosistema DigitalSellers, elegís una y listo — se abre la Analyzer (o Simulador) con los datos del producto ya cargados y la generación arrancando.
+---
 
-## 🚀 Instalación (desarrollo)
+## 📥 Instalación rápida (para clientes)
+
+1. Descargá el **ZIP** más reciente desde **[Releases](../../releases/latest)**
+2. Descomprimí el zip en una carpeta **permanente** de tu PC (ej. `Documentos\DigitalSellers\`)
+3. Abrí `chrome://extensions/` en Chrome
+4. Activá **"Modo de desarrollador"** (toggle arriba a la derecha)
+5. Click en **"Cargar extensión desempaquetada"** → seleccioná la carpeta descomprimida
+6. Listo — andá a MercadoLibre y el botón flotante **DS** aparece arriba a la derecha
+
+> 📖 Instrucciones completas paso a paso: [INSTRUCCIONES-CLIENTE.md](INSTRUCCIONES-CLIENTE.md)
+
+---
+
+## 🚀 Desarrollo
 
 ```bash
-# 1. Clonar el repo
-git clone <url-del-repo>
+# Clonar el repo
+git clone https://github.com/sebardz/DigitalSellers-Extension.git
 cd DigitalSellers-Extension
 
-# 2. Instalar dependencias
+# Instalar dependencias
 npm install
 
-# 3. Generar los íconos
+# Generar los íconos
 npm run generate:icons
 
-# 4. Build (o dev con HMR)
-npm run build       # producción
-npm run dev         # desarrollo con watch
+# Build (o dev con HMR)
+npm run build
+npm run dev
 
-# 5. Cargar en Chrome
-#    a. Abrí chrome://extensions/
-#    b. Activá "Modo desarrollador" (toggle arriba a la derecha)
-#    c. Click "Cargar extensión desempaquetada"
-#    d. Seleccioná la carpeta dist/
+# Cargar la extensión en Chrome:
+#   chrome://extensions/ → Modo desarrollador ON → Cargar desempaquetada → carpeta dist/
 ```
 
 ## 🧪 Tests
@@ -39,18 +50,39 @@ npm run typecheck     # TypeScript
 npm run lint          # ESLint
 ```
 
-## 📦 Empaquetado para Chrome Web Store
+## 📦 Empaquetado manual (sin CI)
 
 ```bash
 npm run pack
-# Genera releases/digitalsellers-hub-v<version>.zip listo para subir
+# Genera releases/digitalsellers-hub-v<version>.zip
 ```
 
-## 🔧 Configuración
+## 🤖 Release automático via GitHub Actions
 
-- **`src/shared/config.ts`** — URLs base del ecosistema DS. Cambiar acá para apuntar a staging o local.
-- **`src/shared/tools.ts`** — Tool Registry. Agregar una tool nueva = sumar una entry + crear su scraper en `src/content/scrapers/<id>.ts`.
-- **`src/manifest.json`** — Permisos y hosts. Sincronizar con `config.ts`.
+Al pushear un tag `v*` (ej. `v0.5.0`), el workflow:
+1. Instala deps
+2. Genera icons
+3. Corre tests + typecheck
+4. Buildea la extensión
+5. Zipea el `dist/`
+6. Crea una **GitHub Release** con el zip adjunto y las notas del CHANGELOG
+
+**Comando para liberar una versión nueva:**
+
+```bash
+# 1. Bump version en package.json + src/manifest.json
+# 2. Agregar entrada al CHANGELOG.md
+# 3. Commit + tag + push
+git add .
+git commit -m "chore: bump v0.5.0"
+git tag v0.5.0
+git push origin main --tags
+# El workflow se dispara y crea la release en ~2min
+```
+
+Los clientes la reciben desde **[github.com/sebardz/DigitalSellers-Extension/releases/latest](../../releases/latest)** — siempre la última.
+
+---
 
 ## 🏗️ Arquitectura
 
@@ -58,7 +90,7 @@ Ver [`PROJECT_CONTEXT.md`](./PROJECT_CONTEXT.md) para el diseño completo.
 
 ## 📄 Privacidad
 
-Ver [`PRIVACY.md`](./PRIVACY.md). TL;DR: no recolectamos nada personal, solo mandamos a DS los datos de la publicación cuando hacés click explícito en una herramienta.
+Ver [`PRIVACY.md`](./PRIVACY.md). TL;DR: no recolectamos nada personal, solo mandamos al backend de DigitalSellers los datos de la publicación cuando hacés click explícito en una herramienta.
 
 ## 📝 Changelog
 
@@ -66,4 +98,4 @@ Ver [`CHANGELOG.md`](./CHANGELOG.md).
 
 ## 📜 Licencia
 
-Propietaria — DigitalSellers. Uso interno.
+Propietaria — DigitalSellers. Uso interno y bajo acuerdo.
