@@ -4,7 +4,6 @@
   "short_name": "DS Hub",
   "version": "0.1.0",
   "description": "Generá packs visuales, calculá ganancias y optimizá tus publicaciones de MercadoLibre con un solo click.",
-  "author": "DigitalSellers",
   "homepage_url": "https://analyzer.digitalsellers.com.ar",
   "icons": {
     "16": "src/assets/icons/icon-16.png",

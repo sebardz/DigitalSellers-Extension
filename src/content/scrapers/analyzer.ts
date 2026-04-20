@@ -19,7 +19,6 @@ import {
   extractTitle,
   isProductDetailPage,
   readJsonLdProduct,
-  readMeta,
 } from "./_core";
 
 // =============================================================================
@@ -71,17 +70,11 @@ function extractAttributes(): Record<string, string> {
   }
 
   // Formato data-testid
-  document
-    .querySelectorAll<HTMLElement>('[data-testid="specs-row"]')
-    .forEach((row) => {
-      const k = row
-        .querySelector<HTMLElement>('[data-testid="specs-key"]')
-        ?.textContent?.trim();
-      const v = row
-        .querySelector<HTMLElement>('[data-testid="specs-value"]')
-        ?.textContent?.trim();
-      if (k && v) attrs[k] = v;
-    });
+  document.querySelectorAll<HTMLElement>('[data-testid="specs-row"]').forEach((row) => {
+    const k = row.querySelector<HTMLElement>('[data-testid="specs-key"]')?.textContent?.trim();
+    const v = row.querySelector<HTMLElement>('[data-testid="specs-value"]')?.textContent?.trim();
+    if (k && v) attrs[k] = v;
+  });
 
   return attrs;
 }
@@ -121,9 +114,8 @@ function extractSeller(): { name: string | null; reputation: string | null } {
   }
 
   const reputation =
-    document
-      .querySelector<HTMLElement>(".ui-pdp-seller__status-title")
-      ?.textContent?.trim() ?? null;
+    document.querySelector<HTMLElement>(".ui-pdp-seller__status-title")?.textContent?.trim() ??
+    null;
 
   return { name, reputation };
 }
