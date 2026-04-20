@@ -11,8 +11,8 @@ export interface FabOptions {
   /** Posición desde bottom/right en px. */
   bottom: number;
   right: number;
-  /** Handler del click. */
-  onClick: () => void;
+  /** Handler del click. Recibe el evento por si el caller quiere stopPropagation. */
+  onClick: (ev?: MouseEvent) => void;
 }
 
 export function mountFab(opts: FabOptions): { host: HTMLElement; setOpen: (v: boolean) => void } {
@@ -46,7 +46,7 @@ export function mountFab(opts: FabOptions): { host: HTMLElement; setOpen: (v: bo
 
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
-    opts.onClick();
+    opts.onClick(e);
   });
 
   shadow.appendChild(btn);

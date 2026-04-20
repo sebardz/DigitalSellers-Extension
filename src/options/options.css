@@ -114,3 +114,38 @@ footer {
 .primary:hover {
   filter: brightness(1.05);
 }
+
+.secondary {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.15s;
+}
+.secondary:hover {
+  background: var(--border);
+}
+
+.card.danger {
+  border-color: rgba(220, 60, 60, 0.2);
+}
+.card.danger h2 {
+  color: #c73e3e;
+}
+
+.hint {
+  display: block;
+  color: var(--fg-muted);
+  font-size: 11px;
+  font-weight: 400;
+  margin-top: 2px;
+  max-width: 320px;
+}
+
+.row > span {
+  line-height: 1.35;
+}

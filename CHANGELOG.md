@@ -1,31 +1,48 @@
 # Changelog
 
-Todos los cambios notables se documentan acá.
 Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), versionado semver.
 
-## [0.1.0] — 2026-04-20
+## [0.2.0] — 2026-04-20
 
 ### Added
 
-- Scaffolding inicial (TypeScript + Vite + Manifest V3)
-- Tool Registry pattern para escalar a múltiples herramientas DS
-- Scraper del Analyzer (título, MLA id, imágenes full-res, atributos, descripción, categoría, seller)
-- Botón flotante inyectado en PDPs de MeLi (AR/BR/MX/CL/CO/PE) con menú desplegable
-- Content-script bridge para comunicación entre frontend Analyzer/Simulador y el background worker
-- Background service worker con router de mensajes (OPEN_TOOL, FETCH_SESSION, HEALTH_CHECK)
-- Popup con healthcheck visual
-- Options page con preferencias (enabled, telemetría, tool default, tema)
-- Shadow DOM isolation del CSS inyectado
-- Dark mode automático (respeta `prefers-color-scheme`)
-- Endpoints del Analyzer: `/api/extension/health` + `/api/extension/pack-visual`
-- Auto-start flow en el Analyzer cuando viene `?source=extension&sessionId=X`
-- Zod schemas client + server sincronizados
-- Version gating (`MIN_EXTENSION_VERSION` en server, 426 si está desactualizada)
-- Tests unitarios del scraper contra fixtures HTML reales
+- **Scraper exhaustivo** — ahora captura todos los campos relevantes del PDP:
+  - Precio actual + precio original + % de descuento
+  - Cuotas (cantidad, monto, "sin interés")
+  - Envío: gratis / Full / retiro en local / mismo día
+  - Condición: nuevo / usado / reacondicionado
+  - Stock disponible + cantidad vendida
+  - Reviews: rating average + cantidad
+  - Variantes (color, talle, capacidad) con opciones + seleccionada
+  - Seller extendido: Tienda Oficial, MercadoLíder, ventas, % positivo
+  - Garantía (texto)
+  - Métodos de pago detectados
+- **Completeness tracker**: cada scrape reporta `N/M campos extraídos` + qué estrategia resolvió cada campo (`meta` / `json-ld` / `dom` / `path` / `query` / `combined`)
+- **Modo debug** en la Options page: loguea a consola la tabla de estrategias por campo
+- **SPA navigation robusta**: patch de `history.pushState` + `replaceState` para re-mount del botón cuando MeLi navega entre PDPs sin recarga
+- **UX polish**:
+  - Tecla `Esc` cierra el menú
+  - Click fuera del área del botón cierra el menú
+  - El menú se cierra automáticamente al picar una tool (feedback visual claro)
+  - Toasts con duración diferenciada según tipo
+- **Options page**: sección "Zona peligrosa" con clear-sessions y reset-preferences
+- **3 fixtures HTML nuevos** + tests asserting cada tipo de PDP
+  - Catálogo con item filter (fixture original)
+  - Tienda Oficial con variantes, oferta, MercadoLíder (nuevo)
+  - Producto usado sin catálogo (nuevo)
 
-### Roadmap próximo (v0.2)
+### Changed
 
-- Scraper del Simulador (precio, categoría, envío, oferta)
-- Auto-start en `simulador.digitalsellers.com.ar`
-- SPA navigation: re-mount del botón cuando MeLi cambia de PDP sin recarga
-- Toast inline con progreso de generación (SSE relay hacia la page de MeLi)
+- Schema Zod (client + server): nuevos campos opcionales para pricing, shipping, condition, availability, reviews, variants, sellerExtended, warranty, paymentMethods
+- `scrapeForAnalyzer` devuelve payload + `_debug` info (se strippea antes de enviar al Analyzer)
+- Imagen cap subido a 60 (de 20) — algunas PDPs tienen galerías grandes
+- Title máximo subido a 500 chars
+
+### Fixed
+
+- Bridge postMessage ahora reintenta cada 400ms por 6s para evitar race condition con el mount del React del Analyzer
+- Content-script anuncia `DSH_EXTENSION_READY` 4 veces (0ms, 100ms, 500ms, 1500ms) para cubrir timing variable
+
+## [0.1.0] — 2026-04-20
+
+- Versión inicial: scaffolding, scraper básico, botón flotante, bridge, endpoints del Analyzer.

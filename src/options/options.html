@@ -23,6 +23,15 @@
           <span>Enviar telemetría anónima</span>
           <input type="checkbox" id="pref-telemetry" />
         </label>
+        <label class="row">
+          <span>
+            Modo debug
+            <small class="hint">
+              Muestra en la consola del navegador qué estrategia resolvió cada campo del scraper.
+            </small>
+          </span>
+          <input type="checkbox" id="pref-debug" />
+        </label>
       </section>
 
       <section class="card">
@@ -44,6 +53,22 @@
             <option value="dark">Oscuro</option>
           </select>
         </label>
+      </section>
+
+      <section class="card danger">
+        <h2>Zona peligrosa</h2>
+        <p class="muted">
+          Estas acciones son irreversibles. Usalas si algo quedó raro o querés
+          empezar de cero.
+        </p>
+        <div class="row">
+          <span>Borrar sesiones guardadas (scrapes pendientes)</span>
+          <button id="btn-clear-sessions" class="secondary">Limpiar</button>
+        </div>
+        <div class="row">
+          <span>Restablecer todas las preferencias</span>
+          <button id="btn-reset-prefs" class="secondary">Restablecer</button>
+        </div>
       </section>
 
       <section class="card">

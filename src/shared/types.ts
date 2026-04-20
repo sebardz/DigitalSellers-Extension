@@ -38,6 +38,12 @@ export interface UserPreferences {
   telemetry: boolean;
   /** ¿Mostrar el botón en sitios MeLi? (kill switch). */
   enabled: boolean;
+  /**
+   * Si true, el content-script loguea en consola qué estrategia resolvió
+   * cada campo del scraper. Útil cuando MeLi cambia el HTML y queremos
+   * identificar rápido qué fallback usar.
+   */
+  debug: boolean;
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
@@ -46,6 +52,7 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
   theme: null,
   telemetry: true,
   enabled: true,
+  debug: false,
 };
 
 /** Respuesta del endpoint /api/extension/health del Analyzer. */

@@ -1,14 +1,11 @@
 /**
- * Zod schemas del contrato Extension ↔ Analyzer/Simulador.
+ * Zod schemas del contrato Extension ↔ Analyzer.
  *
- * El server usa estos mismos schemas para validar cada POST que llega
- * del frontend con data de la extensión. Si MeLi cambia el HTML y el
- * scraper devuelve un shape inválido, preferimos cortar acá y devolver
- * un error claro que procesar basura y generar un pack deforme.
+ * Mantener sincronizado con:
+ *   Analyzer/src/lib/extension/schema.ts (server-side)
  *
- * Importante: mantener este archivo sincronizado con el equivalente
- * server-side del Analyzer (`src/lib/extension/schema.ts`). Si los dos
- * se desvían, el endpoint rechaza todos los requests.
+ * Si alguno cambia sin que el otro se actualice, el endpoint rechaza
+ * los requests hasta que matcheen.
  */
 
 import { z } from "zod";
@@ -27,7 +24,45 @@ export const BaseScrapedPayloadSchema = z.object({
   catalogProductId: z.string().regex(mlaIdRegex).optional(),
 });
 
-/** Payload para Analyzer (pack visual, video pack). */
+// ============== Sub-schemas de campos ricos ==============
+
+const PriceInfoSchema = z.object({
+  current: z.number().nullable(),
+  original: z.number().nullable(),
+  currency: z.string(),
+  discountPercent: z.number().nullable(),
+  installmentCount: z.number().nullable(),
+  installmentAmount: z.number().nullable(),
+  installmentInterestFree: z.boolean().nullable(),
+});
+
+const ShippingInfoSchema = z.object({
+  hasFreeShipping: z.boolean(),
+  isFull: z.boolean(),
+  hasStorePickup: z.boolean(),
+  sameDay: z.boolean(),
+});
+
+const ReviewsSchema = z.object({
+  ratingAverage: z.number().nullable(),
+  reviewCount: z.number().nullable(),
+});
+
+const VariantGroupSchema = z.object({
+  label: z.string(),
+  selected: z.string().nullable(),
+  options: z.array(z.string()),
+});
+
+const SellerExtendedSchema = z.object({
+  isOfficialStore: z.boolean(),
+  isMercadoLider: z.boolean(),
+  salesCompleted: z.string().nullable(),
+  positivePercent: z.number().min(0).max(100).nullable(),
+});
+
+// ============== Payload completo del Analyzer ==============
+
 export const AnalyzerScrapedPayloadSchema = BaseScrapedPayloadSchema.extend({
   toolId: z.enum(["analyzer-pack-visual", "analyzer-video-pack"]),
   title: z.string().min(1).max(500),
@@ -42,11 +77,21 @@ export const AnalyzerScrapedPayloadSchema = BaseScrapedPayloadSchema.extend({
     })
     .optional()
     .nullable(),
+  // Campos extendidos
+  price: PriceInfoSchema.optional(),
+  shipping: ShippingInfoSchema.optional(),
+  condition: z.enum(["nuevo", "usado", "reacondicionado"]).nullable().optional(),
+  availableQuantity: z.number().nullable().optional(),
+  soldQuantity: z.number().nullable().optional(),
+  reviews: ReviewsSchema.optional(),
+  variants: z.array(VariantGroupSchema).optional(),
+  sellerExtended: SellerExtendedSchema.optional(),
+  warranty: z.string().nullable().optional(),
+  paymentMethods: z.array(z.string()).optional(),
 });
 
 export type AnalyzerScrapedPayload = z.infer<typeof AnalyzerScrapedPayloadSchema>;
 
-/** Payload para Simulador (v0.2). */
 export const SimulatorScrapedPayloadSchema = BaseScrapedPayloadSchema.extend({
   toolId: z.literal("simulator-calc"),
   title: z.string(),
@@ -60,7 +105,6 @@ export const SimulatorScrapedPayloadSchema = BaseScrapedPayloadSchema.extend({
 
 export type SimulatorScrapedPayload = z.infer<typeof SimulatorScrapedPayloadSchema>;
 
-/** Union de todos los payloads posibles. Discriminado por `toolId`. */
 export const ScrapedPayloadSchema = z.discriminatedUnion("toolId", [
   AnalyzerScrapedPayloadSchema,
   SimulatorScrapedPayloadSchema,

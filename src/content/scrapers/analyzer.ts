@@ -1,159 +1,119 @@
 /**
  * Scraper para el ANALYZER (Pack Visual + Video Pack).
  *
- * Necesita: título, MLA id (o catalog_product_id), imágenes de alta
- * resolución, atributos del producto, descripción, categoría, seller.
+ * Extrae TODO lo posible del DOM de la PDP. Usa los helpers del `_core.ts`
+ * que reportan qué estrategia resolvió cada campo (útil para debug cuando
+ * MeLi cambia el HTML).
  *
- * Devuelve un payload que cumple AnalyzerScrapedPayloadSchema. Si falla
- * algún campo crítico (título o ambos IDs), devuelve null — la extensión
- * esconde el botón silenciosamente.
+ * Si faltan campos críticos (título + algún ID) devuelve null: el botón
+ * no se muestra y la extensión no molesta en páginas que no son PDP.
  */
 
 import type { AnalyzerScrapedPayload } from "@shared/schemas";
 import {
   canonicalUrl,
   detectSiteId,
+  extractAttributes,
+  extractAvailability,
   extractCatalogProductId,
+  extractCategoryPath,
+  extractDescription,
   extractImages,
   extractItemId,
+  extractPaymentMethods,
+  extractPrice,
+  extractReviews,
+  extractSeller,
+  extractShipping,
   extractTitle,
+  extractVariants,
+  extractWarranty,
   isProductDetailPage,
-  readJsonLdProduct,
+  type Tracked,
 } from "./_core";
-
-// =============================================================================
-// Helpers específicos del Analyzer
-// =============================================================================
-
-/** Extrae la descripción completa del PDP (texto plano). */
-function extractDescription(): string | null {
-  // Botón "Ver más" puede estar colapsado pero el DOM la tiene completa.
-  const selectors = [
-    ".ui-pdp-description__content",
-    '[data-testid="product-description"]',
-    ".ui-pdp-description",
-    ".ui-vpp-description",
-  ];
-  for (const sel of selectors) {
-    const el = document.querySelector<HTMLElement>(sel);
-    if (el?.textContent) {
-      const text = el.textContent.trim();
-      if (text.length > 30) return text;
-    }
-  }
-  // JSON-LD fallback
-  const ld = readJsonLdProduct();
-  if (ld?.description) return ld.description.trim();
-  return null;
-}
-
-/** Extrae atributos de la tabla "Características". */
-function extractAttributes(): Record<string, string> {
-  const attrs: Record<string, string> = {};
-
-  // Formato tabla (más común)
-  const rowSelectors = [
-    ".ui-pdp-specs__table tr",
-    ".andes-table__row",
-    "tr.ui-vpp-striped-specs__row",
-    ".ui-vpp-highlighted-specs__striped-specs li",
-  ];
-  for (const sel of rowSelectors) {
-    document.querySelectorAll<HTMLElement>(sel).forEach((row) => {
-      const cells = row.querySelectorAll("th, td, .andes-table__header, .andes-table__column");
-      if (cells.length >= 2) {
-        const k = cells[0]?.textContent?.trim();
-        const v = cells[1]?.textContent?.trim();
-        if (k && v && !attrs[k]) attrs[k] = v;
-      }
-    });
-  }
-
-  // Formato data-testid
-  document.querySelectorAll<HTMLElement>('[data-testid="specs-row"]').forEach((row) => {
-    const k = row.querySelector<HTMLElement>('[data-testid="specs-key"]')?.textContent?.trim();
-    const v = row.querySelector<HTMLElement>('[data-testid="specs-value"]')?.textContent?.trim();
-    if (k && v) attrs[k] = v;
-  });
-
-  return attrs;
-}
-
-/** Extrae el path de categoría desde el breadcrumb. */
-function extractCategoryPath(): string | null {
-  const crumbs: string[] = [];
-  const selectors = [
-    ".andes-breadcrumb__link",
-    "nav.ui-pdp-breadcrumb a",
-    "a.ui-pdp-header__breadcrumb",
-  ];
-  for (const sel of selectors) {
-    document.querySelectorAll<HTMLElement>(sel).forEach((a) => {
-      const text = a.textContent?.trim();
-      if (text && !crumbs.includes(text)) crumbs.push(text);
-    });
-    if (crumbs.length) break;
-  }
-  return crumbs.length ? crumbs.join(" > ") : null;
-}
-
-/** Extrae nombre y reputación del seller. */
-function extractSeller(): { name: string | null; reputation: string | null } {
-  const nameSelectors = [
-    ".ui-pdp-seller__link-trigger",
-    ".ui-vip-profile-info__info-container h2",
-    ".ui-pdp-seller__header__title",
-  ];
-  let name: string | null = null;
-  for (const sel of nameSelectors) {
-    const el = document.querySelector<HTMLElement>(sel);
-    if (el?.textContent?.trim()) {
-      name = el.textContent.trim();
-      break;
-    }
-  }
-
-  const reputation =
-    document.querySelector<HTMLElement>(".ui-pdp-seller__status-title")?.textContent?.trim() ??
-    null;
-
-  return { name, reputation };
-}
-
-// =============================================================================
-// Main scraper function
-// =============================================================================
 
 export type AnalyzerToolId = "analyzer-pack-visual" | "analyzer-video-pack";
 
 /**
- * Scrapea la PDP actual para una tool del Analyzer.
- *
- * @param toolId — Identifica qué tool específico del Analyzer estamos llenando.
- *                 Ahora el payload es el mismo, pero el toolId viaja en el
- *                 payload para que el server route al flow correcto.
- * @returns AnalyzerScrapedPayload | null si la página no es una PDP válida.
+ * Resumen de completitud para debug. Cuenta qué campos se resolvieron y
+ * con qué estrategia. Se logea en consola y la UI puede mostrar un badge
+ * "19/22 campos ✓".
  */
+export interface ScrapeDebugInfo {
+  fieldsHit: number;
+  fieldsTotal: number;
+  missing: string[];
+  strategies: Record<string, Tracked<unknown>["strategy"]>;
+}
+
+function track<T>(acc: ScrapeDebugInfo, key: string, res: Tracked<T>, isHit: (v: T) => boolean): T {
+  acc.fieldsTotal++;
+  acc.strategies[key] = res.strategy;
+  if (isHit(res.value)) acc.fieldsHit++;
+  else acc.missing.push(key);
+  return res.value;
+}
+
 export function scrapeForAnalyzer(
   toolId: AnalyzerToolId,
   extensionVersion: string,
-): AnalyzerScrapedPayload | null {
+): (AnalyzerScrapedPayload & { _debug: ScrapeDebugInfo }) | null {
   if (!isProductDetailPage()) return null;
 
   const siteId = detectSiteId();
   if (!siteId) return null;
 
-  const title = extractTitle();
+  const debug: ScrapeDebugInfo = {
+    fieldsHit: 0,
+    fieldsTotal: 0,
+    missing: [],
+    strategies: {},
+  };
+
+  const title = track(debug, "title", extractTitle(), (v) => !!v);
   if (!title) return null;
 
-  const itemId = extractItemId() ?? undefined;
-  const catalogProductId = extractCatalogProductId() ?? undefined;
+  const itemId = track(debug, "itemId", extractItemId(), (v) => !!v) ?? undefined;
+  const catalogProductId =
+    track(debug, "catalogProductId", extractCatalogProductId(), (v) => !!v) ?? undefined;
   if (!itemId && !catalogProductId) return null;
 
-  const images = extractImages();
+  const images = track(debug, "images", extractImages(), (v) => v.length > 0);
   if (images.length === 0) return null;
 
-  return {
+  const description = track(debug, "description", extractDescription(), (v) => !!v);
+  const attributes = track(
+    debug,
+    "attributes",
+    extractAttributes(),
+    (v) => Object.keys(v).length > 0,
+  );
+  const category = track(debug, "category", extractCategoryPath(), (v) => !!v);
+  const seller = track(debug, "seller", extractSeller(), (v) => !!v.name);
+  const price = track(debug, "price", extractPrice(), (v) => v.current != null);
+  const shipping = track(
+    debug,
+    "shipping",
+    extractShipping(),
+    (v) => v.hasFreeShipping || v.isFull || v.hasStorePickup,
+  );
+  const availability = track(debug, "availability", extractAvailability(), (v) => !!v.condition);
+  const reviews = track(debug, "reviews", extractReviews(), (v) => v.ratingAverage != null);
+  const variants = track(debug, "variants", extractVariants(), (v) => v.length > 0);
+  const warranty = track(debug, "warranty", extractWarranty(), (v) => !!v);
+  const paymentMethods = track(
+    debug,
+    "paymentMethods",
+    extractPaymentMethods(),
+    (v) => v.length > 0,
+  );
+
+  // Log dev-friendly siempre; el detalle por campo solo en debug mode.
+  console.info(
+    `[DSH] scrape ${debug.fieldsHit}/${debug.fieldsTotal} campos · missing: ${debug.missing.join(", ") || "(ninguno)"}`,
+  );
+
+  const payload: AnalyzerScrapedPayload & { _debug: ScrapeDebugInfo } = {
     extensionVersion,
     scrapedAt: new Date().toISOString(),
     source: "chrome-extension",
@@ -163,10 +123,43 @@ export function scrapeForAnalyzer(
     catalogProductId,
     toolId,
     title,
-    description: extractDescription(),
+    description,
     images,
-    attributes: extractAttributes(),
-    category: extractCategoryPath(),
-    seller: extractSeller(),
+    attributes,
+    category,
+    seller: {
+      name: seller.name,
+      reputation: seller.reputation,
+    },
+    // Campos extendidos (schema nuevo)
+    price: {
+      current: price.current,
+      original: price.original,
+      currency: price.currency,
+      discountPercent: price.discountPercent,
+      installmentCount: price.installmentCount,
+      installmentAmount: price.installmentAmount,
+      installmentInterestFree: price.installmentInterestFree,
+    },
+    shipping,
+    condition: availability.condition,
+    availableQuantity: availability.availableQuantity,
+    soldQuantity: availability.soldQuantity,
+    reviews: {
+      ratingAverage: reviews.ratingAverage,
+      reviewCount: reviews.reviewCount,
+    },
+    variants,
+    sellerExtended: {
+      isOfficialStore: seller.isOfficialStore,
+      isMercadoLider: seller.isMercadoLider,
+      salesCompleted: seller.salesCompleted,
+      positivePercent: seller.positivePercent,
+    },
+    warranty,
+    paymentMethods,
+    _debug: debug,
   };
+
+  return payload;
 }
