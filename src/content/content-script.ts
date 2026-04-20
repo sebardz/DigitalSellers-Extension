@@ -188,13 +188,27 @@ async function handleToolClick(toolId: string, shadowRoot: ShadowRoot) {
  * este relay.
  */
 function setupBridgeForTool() {
+  // Dedupe: la Analyzer hace retry cada 400ms mientras espera la primera
+  // respuesta. Si contestamos a todos los retries con el mismo requestId
+  // no hay problema (el lado Analyzer ignora los duplicados vía handler
+  // cleanup), pero evitamos trabajo extra cacheando por requestId.
+  const seenRequestIds = new Set<string>();
+
   window.addEventListener("message", (event) => {
     if (event.source !== window) return;
     if (event.origin !== location.origin) return;
 
-    const data = event.data as { type?: string; sessionId?: string; requestId?: string };
+    const data = event.data as {
+      type?: string;
+      sessionId?: string;
+      requestId?: string;
+    };
     if (data?.type !== "DSH_FETCH_SESSION") return;
-    if (!data.sessionId) return;
+    if (!data.sessionId || !data.requestId) return;
+
+    // Evitar re-procesar el mismo requestId (retries del Analyzer).
+    if (seenRequestIds.has(data.requestId)) return;
+    seenRequestIds.add(data.requestId);
 
     void (async () => {
       try {
@@ -227,14 +241,22 @@ function setupBridgeForTool() {
     })();
   });
 
-  // Marcamos la página para que el frontend sepa que la extensión está viva
-  window.postMessage(
-    {
-      type: "DSH_EXTENSION_READY",
-      version: EXT_VERSION,
-    },
-    location.origin,
-  );
+  // Marcamos la página para que el frontend sepa que la extensión está viva.
+  // Lo emitimos MÚLTIPLES VECES con delay para cubrir el caso de que el
+  // React de la Analyzer monte después del content-script y se pierda los
+  // primeros signals.
+  const announce = () =>
+    window.postMessage(
+      {
+        type: "DSH_EXTENSION_READY",
+        version: EXT_VERSION,
+      },
+      location.origin,
+    );
+  announce();
+  setTimeout(announce, 100);
+  setTimeout(announce, 500);
+  setTimeout(announce, 1500);
 
   console.info(`[DSH] bridge activo en ${location.origin} (v${EXT_VERSION})`);
 }
