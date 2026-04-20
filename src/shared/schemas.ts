@@ -30,9 +30,9 @@ export const BaseScrapedPayloadSchema = z.object({
 /** Payload para Analyzer (pack visual, video pack). */
 export const AnalyzerScrapedPayloadSchema = BaseScrapedPayloadSchema.extend({
   toolId: z.enum(["analyzer-pack-visual", "analyzer-video-pack"]),
-  title: z.string().min(1),
-  description: z.string().nullable(),
-  images: z.array(z.string().url()).min(1),
+  title: z.string().min(1).max(500),
+  description: z.string().nullable().or(z.literal("")),
+  images: z.array(z.string().url()).min(1).max(60),
   attributes: z.record(z.string(), z.string()),
   category: z.string().nullable().optional(),
   seller: z
@@ -40,7 +40,8 @@ export const AnalyzerScrapedPayloadSchema = BaseScrapedPayloadSchema.extend({
       name: z.string().nullable(),
       reputation: z.string().nullable(),
     })
-    .optional(),
+    .optional()
+    .nullable(),
 });
 
 export type AnalyzerScrapedPayload = z.infer<typeof AnalyzerScrapedPayloadSchema>;
