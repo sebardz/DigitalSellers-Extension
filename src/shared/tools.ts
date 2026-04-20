@@ -55,7 +55,9 @@ export const TOOLS: readonly ToolDefinition[] = [
     icon: "🎨",
     description: "15 imágenes optimizadas listas para publicar",
     targetOrigin: ANALYZER_ORIGIN,
-    targetPath: "/",
+    // El Launcher es el módulo nuevo y limpio que consume el payload
+    // scrapeado directo. Lo dejamos como default del extension flow.
+    targetPath: "/?module=launcher",
     scraperId: "analyzer",
     enabled: true,
     order: 10,

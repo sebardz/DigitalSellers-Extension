@@ -1,6 +1,6 @@
 {
   "name": "digitalsellers-extension",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Chrome extension paraguas del ecosistema DigitalSellers. Inyecta un botón en MercadoLibre que dispara Analyzer, Simulador y futuras herramientas DS con un click.",
   "type": "module",
   "private": true,

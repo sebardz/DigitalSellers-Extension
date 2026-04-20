@@ -2,6 +2,17 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), versionado semver.
 
+## [0.3.0] — 2026-04-20
+
+### Changed
+
+- **Target redirect actualizado al módulo Launcher del Analyzer** — el
+  flujo de pack visual ahora abre `/?module=launcher` (nuevo módulo
+  rediseñado desde cero) en vez de la raíz `/`. Launcher tiene un
+  wizard limpio de 4 pasos (Recibir → Revisar → Generar → Descargar)
+  diseñado específicamente para consumir el payload del DOM scraper,
+  sin legacy de autofill.
+
 ## [0.2.0] — 2026-04-20
 
 ### Added
