@@ -1,0 +1,41 @@
+{
+  "name": "digitalsellers-extension",
+  "version": "0.1.0",
+  "description": "Chrome extension paraguas del ecosistema DigitalSellers. Inyecta un botón en MercadoLibre que dispara Analyzer, Simulador y futuras herramientas DS con un click.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "pack": "npm run build && node scripts/pack.mjs",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "lint": "eslint src --ext .ts,.tsx --max-warnings 0",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "generate:icons": "node scripts/generate-icons.mjs"
+  },
+  "author": "DigitalSellers (Seba Rodriguez)",
+  "license": "UNLICENSED",
+  "homepage": "https://analyzer.digitalsellers.com.ar",
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.0-beta.27",
+    "@types/chrome": "^0.0.287",
+    "@types/node": "^22.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
+    "eslint": "^9.15.0",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.4.1",
+    "sharp": "^0.33.5",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.0",
+    "vitest": "^2.1.5"
+  }
+}

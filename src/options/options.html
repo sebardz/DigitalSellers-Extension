@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Configuración — DigitalSellers Hub</title>
+    <link rel="stylesheet" href="./options.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>DigitalSellers Hub</h1>
+        <p class="muted">Configuración de la extensión</p>
+      </header>
+
+      <section class="card">
+        <h2>General</h2>
+        <label class="row">
+          <span>Extensión habilitada</span>
+          <input type="checkbox" id="pref-enabled" />
+        </label>
+        <label class="row">
+          <span>Enviar telemetría anónima</span>
+          <input type="checkbox" id="pref-telemetry" />
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>Herramienta default</h2>
+        <p class="muted">
+          Si elegís una, al clickear el botón flotante te lleva directo a esa
+          tool. Si la dejás en "Ninguna", te muestra el menú siempre.
+        </p>
+        <select id="pref-default-tool"></select>
+      </section>
+
+      <section class="card">
+        <h2>Apariencia</h2>
+        <label class="row">
+          <span>Tema</span>
+          <select id="pref-theme">
+            <option value="auto">Seguir al sistema</option>
+            <option value="light">Claro</option>
+            <option value="dark">Oscuro</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>Acerca de</h2>
+        <p>
+          Versión <strong id="version">0.1.0</strong> ·
+          <a href="https://digitalsellers.com.ar" target="_blank">digitalsellers.com.ar</a>
+        </p>
+        <p class="muted">
+          La extensión no recolecta datos personales. Solo envía a Analyzer
+          los datos de la publicación cuando hacés click explícitamente en una
+          herramienta. Ver
+          <a href="https://analyzer.digitalsellers.com.ar/privacy" target="_blank">política de privacidad</a>.
+        </p>
+      </section>
+
+      <footer>
+        <button id="save" class="primary">Guardar</button>
+        <span id="saved-indicator" class="muted"></span>
+      </footer>
+    </main>
+    <script type="module" src="./options.ts"></script>
+  </body>
+</html>

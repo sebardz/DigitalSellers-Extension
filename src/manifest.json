@@ -1,0 +1,66 @@
+{
+  "manifest_version": 3,
+  "name": "DigitalSellers Hub",
+  "short_name": "DS Hub",
+  "version": "0.1.0",
+  "description": "Generá packs visuales, calculá ganancias y optimizá tus publicaciones de MercadoLibre con un solo click.",
+  "author": "DigitalSellers",
+  "homepage_url": "https://analyzer.digitalsellers.com.ar",
+  "icons": {
+    "16": "src/assets/icons/icon-16.png",
+    "32": "src/assets/icons/icon-32.png",
+    "48": "src/assets/icons/icon-48.png",
+    "128": "src/assets/icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "DigitalSellers Hub",
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "src/assets/icons/icon-16.png",
+      "32": "src/assets/icons/icon-32.png",
+      "48": "src/assets/icons/icon-48.png"
+    }
+  },
+  "background": {
+    "service_worker": "src/background/background.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.mercadolibre.com.ar/*",
+        "*://*.mercadolivre.com.br/*",
+        "*://*.mercadolibre.com.mx/*",
+        "*://*.mercadolibre.cl/*",
+        "*://*.mercadolibre.com.co/*",
+        "*://*.mercadolibre.com.pe/*",
+        "https://analyzer.digitalsellers.com.ar/*",
+        "https://simulador.digitalsellers.com.ar/*"
+      ],
+      "js": ["src/content/content-script.ts"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "options_page": "src/options/options.html",
+  "permissions": ["storage", "tabs", "activeTab"],
+  "host_permissions": [
+    "*://*.mercadolibre.com.ar/*",
+    "*://*.mercadolivre.com.br/*",
+    "*://*.mercadolibre.com.mx/*",
+    "*://*.mercadolibre.cl/*",
+    "*://*.mercadolibre.com.co/*",
+    "*://*.mercadolibre.com.pe/*",
+    "https://analyzer.digitalsellers.com.ar/*",
+    "https://simulador.digitalsellers.com.ar/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/assets/*"],
+      "matches": [
+        "*://*.mercadolibre.com.ar/*",
+        "*://*.mercadolivre.com.br/*"
+      ]
+    }
+  ]
+}

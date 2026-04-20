@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+.vite/
+*.zip
+.env
+.env.local
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+.idea/
+*.tsbuildinfo

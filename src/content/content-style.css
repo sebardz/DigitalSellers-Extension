@@ -1,0 +1,242 @@
+/*
+ * Estilos del botón flotante y el menú. Se inyectan dentro de un
+ * Shadow DOM para no colisionar con el CSS de MeLi.
+ *
+ * Todas las clases llevan prefijo `dsh-` para claridad cuando inspeccionamos.
+ */
+
+/* ========== Botón flotante ========== */
+
+.dsh-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  border: none;
+  background: linear-gradient(135deg, #2968ff 0%, #6a3dff 100%);
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(41, 104, 255, 0.35), 0 1px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2147483647; /* max int-16 — encima de TODO en MeLi */
+  transition: transform 0.18s ease-out, box-shadow 0.18s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.dsh-fab:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 20px rgba(41, 104, 255, 0.45), 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dsh-fab:active {
+  transform: scale(0.97);
+}
+
+.dsh-fab[data-open="true"] {
+  transform: rotate(45deg);
+}
+
+/* ========== Menú desplegable ========== */
+
+.dsh-menu {
+  position: fixed;
+  bottom: 92px;
+  right: 24px;
+  min-width: 320px;
+  max-width: 400px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.18s ease-out, transform 0.18s ease-out;
+}
+
+.dsh-menu[data-open="true"] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.dsh-menu__header {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dsh-menu__title {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+  color: #111;
+}
+
+.dsh-menu__subtitle {
+  font-size: 12px;
+  margin: 2px 0 0;
+  color: #666;
+}
+
+.dsh-menu__list {
+  padding: 8px 0;
+  margin: 0;
+  list-style: none;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.dsh-menu__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  color: #111;
+  transition: background 0.15s ease;
+}
+
+.dsh-menu__item:hover {
+  background: rgba(41, 104, 255, 0.06);
+}
+
+.dsh-menu__item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dsh-menu__icon {
+  font-size: 20px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.dsh-menu__label {
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.dsh-menu__badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  background: #fff1c0;
+  color: #8a5a00;
+  vertical-align: middle;
+}
+
+.dsh-menu__description {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
+.dsh-menu__footer {
+  padding: 10px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #888;
+  background: #fafafa;
+}
+
+.dsh-menu__footer-link {
+  color: #2968ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.dsh-menu__footer-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== Toast inline ========== */
+
+.dsh-toast {
+  position: fixed;
+  bottom: 92px;
+  right: 24px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  max-width: 320px;
+  z-index: 2147483647;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.dsh-toast[data-open="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dsh-toast--error {
+  background: #fee;
+  color: #a00;
+  border: 1px solid #fcc;
+}
+
+.dsh-toast--success {
+  background: #efe;
+  color: #060;
+  border: 1px solid #cec;
+}
+
+.dsh-toast--info {
+  background: #eef4ff;
+  color: #0a47c2;
+  border: 1px solid #cddcff;
+}
+
+/* ========== Dark mode ========== */
+
+@media (prefers-color-scheme: dark) {
+  .dsh-menu {
+    background: #1e1e1e;
+    color: #eaeaea;
+  }
+  .dsh-menu__header {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+  .dsh-menu__title {
+    color: #fafafa;
+  }
+  .dsh-menu__subtitle,
+  .dsh-menu__description {
+    color: #a0a0a0;
+  }
+  .dsh-menu__item {
+    color: #eaeaea;
+  }
+  .dsh-menu__item:hover {
+    background: rgba(41, 104, 255, 0.15);
+  }
+  .dsh-menu__footer {
+    background: #181818;
+    border-top-color: rgba(255, 255, 255, 0.08);
+    color: #888;
+  }
+}
