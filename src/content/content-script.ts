@@ -6,8 +6,8 @@
  *   A) En MercadoLibre:
  *      - Detectar si estamos en una PDP
  *      - Inyectar el botón flotante + menú de tools
- *      - Cuando el user elige una tool, correr su scraper y mandar el
- *        payload al background worker
+ *      - Cuando el user elige una tool, mandar solo una referencia de la
+ *        publicacion al background worker. Analyzer hidrata con API oficial.
  *
  *   B) En Analyzer/Simulador:
  *      - Escuchar window.postMessage del frontend
@@ -152,7 +152,7 @@ async function handleToolClick(
     return;
   }
 
-  // Correr el scraper correspondiente
+  // Captura solo URL/IDs para que Analyzer hidrate con API oficial MeLi.
   const payload = runScraper(tool.scraperId, tool.id, EXT_VERSION);
   if (!payload) {
     showToast(shadowRoot, {
@@ -163,34 +163,6 @@ async function handleToolClick(
       anchor,
     });
     return;
-  }
-
-  // Si hay debug info y el user activó debug mode, lo volcamos en consola
-  // con formato amigable.
-  const debugInfo = (
-    payload as {
-      _debug?: {
-        fieldsHit: number;
-        fieldsTotal: number;
-        missing: string[];
-        strategies: Record<string, string>;
-      };
-    }
-  )._debug;
-  const prefs = await getPreferences();
-  if (prefs.debug && debugInfo) {
-    console.group(`[DSH] Debug scrape: ${debugInfo.fieldsHit}/${debugInfo.fieldsTotal}`);
-    console.table(debugInfo.strategies);
-    if (debugInfo.missing.length) {
-      console.warn("Campos faltantes:", debugInfo.missing);
-    }
-    console.groupEnd();
-  }
-
-  // Le sacamos el _debug antes de enviarlo al background (no necesita
-  // viajar al Analyzer).
-  if (debugInfo) {
-    delete (payload as { _debug?: unknown })._debug;
   }
 
   showToast(shadowRoot, {
@@ -206,10 +178,11 @@ async function handleToolClick(
       toolId: tool.id,
       payload: payload as Record<string, unknown> & {
         extensionVersion: string;
-        scrapedAt: string;
         source: "chrome-extension";
+        sourceMode: "official-api-reference";
         url: string;
-        siteId: "MLA" | "MLB" | "MLM" | "MLC" | "MCO" | "MPE";
+        siteId: string;
+        capturedAt: string;
       },
     });
 

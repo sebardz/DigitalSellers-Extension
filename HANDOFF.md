@@ -13,7 +13,7 @@
 2. Activá "Modo desarrollador" (toggle arriba a la derecha)
 3. Click "Cargar extensión desempaquetada"
 4. Seleccioná la carpeta:
-   G:\CC\DigitalSellers\DS-APP\DigitalSellers-Extension\dist
+   D:\CC\DigitalSellers\DS-APP\DigitalSellers-Extension\dist
 ```
 
 Deberías ver el ícono DS (gradiente azul-violeta) en la barra de extensiones.

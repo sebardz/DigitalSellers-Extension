@@ -28,7 +28,7 @@ Al volver a la terminal vas a ver `✓ Authentication complete.`
 Desde la carpeta de la extensión:
 
 ```bash
-cd "G:/CC/DigitalSellers/DS-APP/DigitalSellers-Extension"
+cd "D:/CC/DigitalSellers/DS-APP/DigitalSellers-Extension"
 
 # Crea repo privado "DigitalSellers-Extension" en tu cuenta
 # + configura remote origin + push del main + push de tags

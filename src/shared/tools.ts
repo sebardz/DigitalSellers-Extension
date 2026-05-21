@@ -2,7 +2,7 @@
  * Tool Registry — fuente única de verdad de TODAS las herramientas DS
  * que la extensión puede disparar desde una página de MercadoLibre.
  *
- * Agregar una tool nueva = agregar una entry acá + crear su scraper en
+ * Agregar una tool nueva = agregar una entry aca + crear su collector en
  * `src/content/scrapers/<scraperId>.ts`. No hay que tocar UI ni router.
  */
 
@@ -25,7 +25,7 @@ export interface ToolDefinition {
    */
   targetPath: string;
   /**
-   * ID del scraper que alimenta a esta tool. Debe coincidir con un archivo
+   * ID del collector que alimenta a esta tool. Debe coincidir con un archivo
    * en `src/content/scrapers/<id>.ts` que exporta default una función.
    */
   scraperId: string;
@@ -55,8 +55,7 @@ export const TOOLS: readonly ToolDefinition[] = [
     icon: "🎨",
     description: "15 imágenes optimizadas listas para publicar",
     targetOrigin: ANALYZER_ORIGIN,
-    // El Launcher es el módulo nuevo y limpio que consume el payload
-    // scrapeado directo. Lo dejamos como default del extension flow.
+    // El Launcher consume solo una referencia; Analyzer hidrata via API MeLi.
     targetPath: "/?module=launcher",
     scraperId: "analyzer",
     enabled: true,

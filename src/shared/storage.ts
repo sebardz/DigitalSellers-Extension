@@ -1,7 +1,7 @@
 /**
  * Wrapper tipado sobre chrome.storage con TTL automático.
  *
- * - `session.*` → datos efímeros por pack (chrome.storage.local con TTL)
+ * - `session.*` → referencias efímeras por pack (chrome.storage.local con TTL)
  * - `prefs`     → preferencias del user (chrome.storage.sync)
  */
 
@@ -17,7 +17,7 @@ interface SessionEntry {
 }
 
 // =============================================================================
-// Session (short-lived scraped payloads)
+// Session (short-lived official API references)
 // =============================================================================
 
 export async function saveSession(

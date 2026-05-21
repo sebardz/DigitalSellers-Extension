@@ -1,8 +1,8 @@
 /**
- * Registry central de scrapers.
+ * Registry central de collectors.
  *
- * Cuando agregamos una tool nueva al `tools.ts`, sumamos su scraper acá.
- * El content-script busca la función por `scraperId` y la ejecuta.
+ * Cuando agregamos una tool nueva al `tools.ts`, sumamos su collector aca.
+ * El content-script busca la funcion por `scraperId` y la ejecuta.
  */
 
 import type { AnalyzerToolId } from "./analyzer";
@@ -22,7 +22,7 @@ const scrapers: Record<string, ScraperFn> = {
   // simulator: (_, version) => scrapeForSimulator(version), // v0.2
 };
 
-/** Busca el scraper correspondiente a una tool y lo corre. */
+/** Busca el collector correspondiente a una tool y lo corre. */
 export function runScraper(
   scraperId: string,
   toolId: string,
@@ -30,13 +30,13 @@ export function runScraper(
 ): ScrapeResult {
   const fn = scrapers[scraperId];
   if (!fn) {
-    console.warn(`[DSH] scraper "${scraperId}" no encontrado en el registry`);
+    console.warn(`[DSH] collector "${scraperId}" no encontrado en el registry`);
     return null;
   }
   try {
     return fn(toolId, extensionVersion);
   } catch (err) {
-    console.error(`[DSH] scraper "${scraperId}" falló:`, err);
+    console.error(`[DSH] collector "${scraperId}" falló:`, err);
     return null;
   }
 }

@@ -40,20 +40,3 @@ export const MELI_HOSTS = [
   "mercadolibre.com.co",
   "mercadolibre.com.pe",
 ] as const;
-
-export type MeliHost = (typeof MELI_HOSTS)[number];
-
-/**
- * Map de host → siteId oficial de MeLi.
- * Sitos: https://developers.mercadolibre.com.ar/en_us/how-sites-work
- */
-export const HOST_TO_SITE_ID: Record<MeliHost, SiteId> = {
-  "mercadolibre.com.ar": "MLA",
-  "mercadolivre.com.br": "MLB",
-  "mercadolibre.com.mx": "MLM",
-  "mercadolibre.cl": "MLC",
-  "mercadolibre.com.co": "MCO",
-  "mercadolibre.com.pe": "MPE",
-};
-
-export type SiteId = "MLA" | "MLB" | "MLM" | "MLC" | "MCO" | "MPE";

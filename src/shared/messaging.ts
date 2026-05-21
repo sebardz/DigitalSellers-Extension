@@ -50,7 +50,7 @@ export interface HealthCheckResponse {
 // =============================================================================
 
 /**
- * La tab del Analyzer pide el payload scrapeado que le corresponde por sessionId.
+ * La tab del Analyzer pide la referencia oficial que le corresponde por sessionId.
  * Este mensaje lo origina el content script inyectado en `analyzer.digitalsellers.com.ar`.
  */
 export interface FetchSessionMessage {

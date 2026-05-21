@@ -3,8 +3,6 @@
  * junto al módulo que los usa (ej. scraper output en `scrapers/_core.ts`).
  */
 
-import type { SiteId } from "./config";
-
 /**
  * Payload base que TODAS las tools reciben al arrancar desde la extensión.
  * Cada tool extiende con campos propios (ver `schemas.ts`).
@@ -12,14 +10,16 @@ import type { SiteId } from "./config";
 export interface BaseScrapedPayload {
   /** Versión semver de la extensión que lo generó. */
   extensionVersion: string;
-  /** Cuándo se scrapeó (ISO 8601). */
-  scrapedAt: string;
+  /** Cuándo se capturó la referencia (ISO 8601). */
+  capturedAt: string;
   /** Literal para diferenciar del flow de copy-paste tradicional. */
   source: "chrome-extension";
+  /** La extension no transporta datos MeLi: Analyzer hidrata via API oficial. */
+  sourceMode: "official-api-reference";
   /** URL canónica de la PDP. */
   url: string;
   /** Código oficial de sitio MeLi. */
-  siteId: SiteId;
+  siteId: string;
   /** MLA id (si se pudo extraer). */
   itemId?: string;
   /** product_id del catálogo (si la PDP es de catálogo). */
@@ -50,9 +50,8 @@ export interface UserPreferences {
   /** ¿Mostrar el botón en sitios MeLi? (kill switch). */
   enabled: boolean;
   /**
-   * Si true, el content-script loguea en consola qué estrategia resolvió
-   * cada campo del scraper. Útil cuando MeLi cambia el HTML y queremos
-   * identificar rápido qué fallback usar.
+   * Reservado para logs de integracion. No habilita lectura de datos MeLi
+   * desde HTML/DOM como fuente de verdad.
    */
   debug: boolean;
 }
