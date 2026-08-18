@@ -45,42 +45,25 @@ npm run dev
 
 ```bash
 npm run test          # interactive
-npm run test:run      # one-shot (CI)
+npm run test:run      # one-shot local
 npm run typecheck     # TypeScript
 npm run lint          # ESLint
 ```
 
-## 📦 Empaquetado manual (sin CI)
+## 📦 Empaquetado y release local
 
 ```bash
 npm run pack
 # Genera releases/digitalsellers-hub-v<version>.zip
 ```
 
-## 🤖 Release automático via GitHub Actions
+El gate recomendado valida que `package.json` y `src/manifest.json` coincidan, corre iconos, lint, tests, typecheck y el pack canónico:
 
-Al pushear un tag `v*` (ej. `v0.5.0`), el workflow:
-1. Instala deps
-2. Genera icons
-3. Corre tests + typecheck
-4. Buildea la extensión
-5. Zipea el `dist/`
-6. Crea una **GitHub Release** con el zip adjunto y las notas del CHANGELOG
-
-**Comando para liberar una versión nueva:**
-
-```bash
-# 1. Bump version en package.json + src/manifest.json
-# 2. Agregar entrada al CHANGELOG.md
-# 3. Commit + tag + push
-git add .
-git commit -m "chore: bump v0.5.0"
-git tag v0.5.0
-git push origin main --tags
-# El workflow se dispara y crea la release en ~2min
+```powershell
+D:\CC\Agent-Master\local-workflows.ps1 -Workflow extension-release -Version 0.4.0
 ```
 
-Los clientes la reciben desde **[github.com/sebardz/DigitalSellers-Extension/releases/latest](../../releases/latest)** — siempre la última.
+El comando sólo crea un ZIP local; no crea releases ni publica archivos. Revisar el artifact antes de cualquier distribución manual.
 
 ---
 
