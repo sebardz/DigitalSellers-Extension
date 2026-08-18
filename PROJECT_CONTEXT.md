@@ -208,7 +208,7 @@ Enviados a `POST /api/extension/telemetry` con un `clientId` generado random al 
 
 - **Unit** — scrapers con HTML fixtures reales (`tests/fixtures/`)
 - **E2E manual** — checklist de 5 URLs distintas de MeLi por release (item propio, catálogo con/sin pdp_filters, slug-only, categoría mixta)
-- **CI** — GitHub Actions corre lint + typecheck + vitest en cada PR
+- **Calidad local** — `npm run lint`, `npm run typecheck`, `npm run test:run` y `npm run pack`; GitHub Actions permanece deshabilitado para no consumir cuota.
 
 ## 📁 Estructura de archivos
 
