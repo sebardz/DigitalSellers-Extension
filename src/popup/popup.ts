@@ -1,7 +1,7 @@
 /**
  * Popup al clickear el ícono de la extensión.
  *
- * Muestra estado (health check), shortcuts rápidos a Analyzer/Simulador
+ * Muestra estado, accesos rápidos a las herramientas vigentes
  * y un link a Options.
  */
 

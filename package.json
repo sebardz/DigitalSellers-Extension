@@ -1,7 +1,7 @@
 {
   "name": "digitalsellers-extension",
   "version": "0.4.0",
-  "description": "Chrome extension paraguas del ecosistema DigitalSellers. Inyecta un botón en MercadoLibre que dispara Analyzer, Simulador y futuras herramientas DS con un click.",
+  "description": "Chrome extension paraguas del ecosistema DigitalSellers para acceder a sus herramientas desde MercadoLibre.",
   "type": "module",
   "private": true,
   "engines": {
@@ -20,7 +20,7 @@
   },
   "author": "DigitalSellers (Seba Rodriguez)",
   "license": "UNLICENSED",
-  "homepage": "https://analyzer.digitalsellers.com.ar",
+  "homepage": "https://digitalsellers.com.ar",
   "dependencies": {
     "zod": "^3.23.8"
   },

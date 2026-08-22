@@ -1,5 +1,5 @@
 /**
- * Content Script — se inyecta en páginas de MercadoLibre y del Analyzer.
+ * Content Script — se inyecta en páginas de MercadoLibre y herramientas DS.
  *
  * Dos responsabilidades bien distintas según en qué host esté corriendo:
  *
@@ -7,9 +7,9 @@
  *      - Detectar si estamos en una PDP
  *      - Inyectar el botón flotante + menú de tools
  *      - Cuando el user elige una tool, mandar solo una referencia de la
- *        publicacion al background worker. Analyzer hidrata con API oficial.
+ *        publicacion al background worker para hidratar con API oficial.
  *
- *   B) En Analyzer/Simulador:
+ *   B) En Simulador:
  *      - Escuchar window.postMessage del frontend
  *      - Relayear fetchSession hacia el background worker
  *      - Devolver el payload para que el frontend arranque el flow
@@ -23,7 +23,7 @@ import { mountMenu } from "./menu";
 import { showToast } from "./toast";
 import { sendMessage } from "@shared/messaging";
 import { getPreferences } from "@shared/storage";
-import { ANALYZER_ORIGIN, SIMULATOR_ORIGIN } from "@shared/config";
+import { SIMULATOR_ORIGIN } from "@shared/config";
 
 // Versión hardcodeada en build. Vite inlinea con define.
 const EXT_VERSION = chrome.runtime.getManifest().version;
@@ -36,7 +36,7 @@ void (async function main() {
   const host = location.host;
   const origin = location.origin;
 
-  if (origin === ANALYZER_ORIGIN || origin === SIMULATOR_ORIGIN) {
+  if (origin === SIMULATOR_ORIGIN) {
     setupBridgeForTool();
     return;
   }
@@ -152,7 +152,7 @@ async function handleToolClick(
     return;
   }
 
-  // Captura solo URL/IDs para que Analyzer hidrate con API oficial MeLi.
+  // Captura solo URL/IDs para hidratar con API oficial MeLi.
   const payload = runScraper(tool.scraperId, tool.id, EXT_VERSION);
   if (!payload) {
     showToast(shadowRoot, {
@@ -203,11 +203,11 @@ async function handleToolClick(
 }
 
 // =============================================================================
-// Flow B — en Analyzer/Simulador (bridge)
+// Flow B — en Simulador (bridge)
 // =============================================================================
 
 /**
- * En la página del Analyzer/Simulador, la extensión actúa como puente:
+ * En la página del Simulador, la extensión actúa como puente:
  * el frontend pregunta "dame el payload de la sessionId X" vía
  * window.postMessage, y nosotros lo pedimos al background worker y
  * lo devolvemos.
@@ -216,9 +216,9 @@ async function handleToolClick(
  * este relay.
  */
 function setupBridgeForTool() {
-  // Dedupe: la Analyzer hace retry cada 400ms mientras espera la primera
+  // Dedupe: la herramienta hace retry cada 400ms mientras espera la primera
   // respuesta. Si contestamos a todos los retries con el mismo requestId
-  // no hay problema (el lado Analyzer ignora los duplicados vía handler
+  // no hay problema (el frontend ignora los duplicados vía handler
   // cleanup), pero evitamos trabajo extra cacheando por requestId.
   const seenRequestIds = new Set<string>();
 
@@ -234,7 +234,7 @@ function setupBridgeForTool() {
     if (data?.type !== "DSH_FETCH_SESSION") return;
     if (!data.sessionId || !data.requestId) return;
 
-    // Evitar re-procesar el mismo requestId (retries del Analyzer).
+    // Evitar re-procesar el mismo requestId (retries del frontend).
     if (seenRequestIds.has(data.requestId)) return;
     seenRequestIds.add(data.requestId);
 
@@ -270,7 +270,7 @@ function setupBridgeForTool() {
 
   // Marcamos la página para que el frontend sepa que la extensión está viva.
   // Lo emitimos MÚLTIPLES VECES con delay para cubrir el caso de que el
-  // React de la Analyzer monte después del content-script y se pierda los
+  // React de la herramienta monte después del content-script y se pierda los
   // primeros signals.
   const announce = () =>
     window.postMessage(

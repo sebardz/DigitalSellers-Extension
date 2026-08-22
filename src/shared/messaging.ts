@@ -46,12 +46,11 @@ export interface HealthCheckResponse {
 }
 
 // =============================================================================
-// Mensajes Analyzer (via content script bridge) → Background
+// Mensajes de herramientas (via content script bridge) → Background
 // =============================================================================
 
 /**
- * La tab del Analyzer pide la referencia oficial que le corresponde por sessionId.
- * Este mensaje lo origina el content script inyectado en `analyzer.digitalsellers.com.ar`.
+ * La herramienta pide la referencia oficial que le corresponde por sessionId.
  */
 export interface FetchSessionMessage {
   type: "FETCH_SESSION";

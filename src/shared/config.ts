@@ -6,24 +6,14 @@
  * nativamente — el build de Vite inlinea estas constantes.
  */
 
-export const ANALYZER_ORIGIN = "https://analyzer.digitalsellers.com.ar";
 export const SIMULATOR_ORIGIN = "https://simulador.digitalsellers.com.ar";
-
-/**
- * Endpoint que la extensión pinguea al arrancar para saber si su versión
- * sigue soportada. El Analyzer devuelve `{ minExtensionVersion, notice }`.
- */
-export const HEALTH_ENDPOINT = `${ANALYZER_ORIGIN}/api/extension/health`;
-
-/** Endpoint opcional para telemetría anónima (uso por tool). */
-export const TELEMETRY_ENDPOINT = `${ANALYZER_ORIGIN}/api/extension/telemetry`;
 
 /** Nombre del namespace usado en chrome.storage.local para sesiones activas. */
 export const STORAGE_SESSION_PREFIX = "dsh:session:";
 
 /**
  * Cuánto tiempo mantenemos un payload pre-scrapeado en storage antes de
- * descartarlo. La tab del Analyzer debería consumirlo en segundos, pero
+ * descartarlo. La herramienta debería consumirlo en segundos, pero
  * si el user cierra la pestaña sin arrancar, lo limpiamos.
  */
 export const SESSION_TTL_MS = 5 * 60 * 1000; // 5 min

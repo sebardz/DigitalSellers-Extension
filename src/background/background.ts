@@ -4,10 +4,10 @@
  * Responsabilidades:
  *   - Recibir OPEN_TOOL del content-script, guardar payload en storage,
  *     abrir nueva tab con URL del tool + sessionId
- *   - Recibir FETCH_SESSION del content-script bridge en Analyzer/Simulador,
+ *   - Recibir FETCH_SESSION del content-script bridge en las herramientas,
  *     devolver el payload guardado
  *   - Purgar sessions expiradas en onStartup
- *   - Chequear HEALTH_CHECK contra Analyzer y avisar si hay que actualizar
+ *   - Responder HEALTH_CHECK sin depender de un servicio retirado
  *   - Abrir options page cuando lo pidan desde el content-script
  */
 
@@ -25,8 +25,6 @@ import {
   saveSession,
 } from "@shared/storage";
 import { getTool } from "@shared/tools";
-import { HEALTH_ENDPOINT } from "@shared/config";
-import type { HealthCheckResponse as HealthRemoteResponse } from "@shared/types";
 
 const EXT_VERSION = chrome.runtime.getManifest().version;
 
@@ -138,38 +136,12 @@ async function handleFetchSession(
 async function handleHealthCheck(
   _msg: HealthCheckMessage,
 ): Promise<HealthCheckResponse> {
-  try {
-    const res = await fetch(HEALTH_ENDPOINT, {
-      method: "GET",
-      headers: { Accept: "application/json" },
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) {
-      return {
-        type: "HEALTH_CHECK_RESULT",
-        ok: false,
-        versionOk: true, // No podemos validar → damos el beneficio de la duda
-        currentVersion: EXT_VERSION,
-      };
-    }
-    const data = (await res.json()) as HealthRemoteResponse;
-    return {
-      type: "HEALTH_CHECK_RESULT",
-      ok: true,
-      versionOk: isVersionGte(EXT_VERSION, data.minExtensionVersion),
-      currentVersion: EXT_VERSION,
-      minVersion: data.minExtensionVersion,
-      notice: data.notice,
-    };
-  } catch {
-    // Offline u otro error — no bloqueamos al user
-    return {
-      type: "HEALTH_CHECK_RESULT",
-      ok: false,
-      versionOk: true,
-      currentVersion: EXT_VERSION,
-    };
-  }
+  return {
+    type: "HEALTH_CHECK_RESULT",
+    ok: true,
+    versionOk: true,
+    currentVersion: EXT_VERSION,
+  };
 }
 
 // =============================================================================

@@ -1,8 +1,8 @@
 /**
- * Zod schemas del contrato Extension -> Analyzer.
+ * Zod schemas del contrato entre la extensión y las herramientas.
  *
  * La extension NO transporta datos de producto de MercadoLibre. Solo envia
- * una referencia minima para que Analyzer hidrate desde la API oficial MeLi.
+ * una referencia minima para hidratar desde la API oficial MeLi.
  */
 
 import { z } from "zod";
@@ -21,14 +21,6 @@ export const BaseReferencePayloadSchema = z.object({
   catalogProductId: z.string().regex(meliIdRegex).optional(),
 });
 
-export const AnalyzerScrapedPayloadSchema = BaseReferencePayloadSchema.extend({
-  toolId: z.enum(["analyzer-pack-visual", "analyzer-video-pack"]),
-}).refine((payload) => !!payload.itemId || !!payload.catalogProductId, {
-  message: "Se requiere itemId o catalogProductId para hidratar desde API oficial MeLi.",
-});
-
-export type AnalyzerScrapedPayload = z.infer<typeof AnalyzerScrapedPayloadSchema>;
-
 export const SimulatorScrapedPayloadSchema = BaseReferencePayloadSchema.extend({
   toolId: z.literal("simulator-calc"),
 }).refine((payload) => !!payload.itemId || !!payload.catalogProductId, {
@@ -37,9 +29,6 @@ export const SimulatorScrapedPayloadSchema = BaseReferencePayloadSchema.extend({
 
 export type SimulatorScrapedPayload = z.infer<typeof SimulatorScrapedPayloadSchema>;
 
-export const ScrapedPayloadSchema = z.union([
-  AnalyzerScrapedPayloadSchema,
-  SimulatorScrapedPayloadSchema,
-]);
+export const ScrapedPayloadSchema = SimulatorScrapedPayloadSchema;
 
 export type ScrapedPayload = z.infer<typeof ScrapedPayloadSchema>;

@@ -14,7 +14,7 @@ export interface BaseScrapedPayload {
   capturedAt: string;
   /** Literal para diferenciar del flow de copy-paste tradicional. */
   source: "chrome-extension";
-  /** La extension no transporta datos MeLi: Analyzer hidrata via API oficial. */
+  /** La extensión no transporta datos MeLi: la herramienta hidrata via API oficial. */
   sourceMode: "official-api-reference";
   /** URL canónica de la PDP. */
   url: string;
@@ -67,11 +67,11 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
   debug: false,
 };
 
-/** Respuesta del endpoint /api/extension/health del Analyzer. */
+/** Respuesta de compatibilidad remota para futuras herramientas. */
 export interface HealthCheckResponse {
   ok: boolean;
   minExtensionVersion: string;
   notice?: string;
-  /** Si el Analyzer detectó que tiene que deshabilitar alguna tool, la lista. */
+  /** Herramientas que un servicio remoto podría deshabilitar. */
   disabledTools?: string[];
 }

@@ -6,7 +6,7 @@
  * `src/content/scrapers/<scraperId>.ts`. No hay que tocar UI ni router.
  */
 
-import { ANALYZER_ORIGIN, SIMULATOR_ORIGIN } from "./config";
+import { SIMULATOR_ORIGIN } from "./config";
 
 export interface ToolDefinition {
   /** Identifier único (kebab-case). Va en telemetría y mensajes. */
@@ -50,30 +50,6 @@ export interface ToolDefinition {
 
 export const TOOLS: readonly ToolDefinition[] = [
   {
-    id: "analyzer-pack-visual",
-    label: "Generar Pack Visual",
-    icon: "🎨",
-    description: "15 imágenes optimizadas listas para publicar",
-    targetOrigin: ANALYZER_ORIGIN,
-    // El Launcher consume solo una referencia; Analyzer hidrata via API MeLi.
-    targetPath: "/?module=launcher",
-    scraperId: "analyzer",
-    enabled: true,
-    order: 10,
-  },
-  {
-    id: "analyzer-video-pack",
-    label: "Generar Video Pack",
-    icon: "🎬",
-    description: "3 videos verticales 9:16 para Clips y Reels",
-    targetOrigin: ANALYZER_ORIGIN,
-    targetPath: "/?module=video-pack",
-    scraperId: "analyzer",
-    enabled: true,
-    beta: true,
-    order: 20,
-  },
-  {
     id: "simulator-calc",
     label: "Calcular Ganancia",
     icon: "🧮",
@@ -83,7 +59,7 @@ export const TOOLS: readonly ToolDefinition[] = [
     scraperId: "simulator",
     enabled: false, // v0.2 — habilitamos cuando tengamos el scraper
     beta: true,
-    order: 30,
+    order: 10,
   },
 ] as const;
 
