@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "managedBy": "Agent-Master",
+  "adapter": "node",
+  "evidence": ["package.json"],
+  "gate": {
+    "commands": [
+      { "name": "Extension lint", "executable": "npm", "arguments": ["run", "lint"], "workingDirectory": "." },
+      { "name": "Extension types", "executable": "npm", "arguments": ["run", "typecheck"], "workingDirectory": "." },
+      { "name": "Extension tests", "executable": "npm", "arguments": ["run", "test:run", "--", "--maxWorkers", "2"], "workingDirectory": "." },
+      { "name": "Extension build", "executable": "npm", "arguments": ["run", "build"], "workingDirectory": "." },
+      { "name": "Extension dependency audit", "executable": "npm", "arguments": ["audit", "--audit-level=moderate"], "workingDirectory": "." }
+    ]
+  }
+}
