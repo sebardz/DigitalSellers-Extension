@@ -22,7 +22,7 @@
   "license": "UNLICENSED",
   "homepage": "https://digitalsellers.com.ar",
   "dependencies": {
-    "zod": "^3.23.8"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.4.0",

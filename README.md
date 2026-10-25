@@ -1,6 +1,8 @@
 # DigitalSellers Hub — Chrome Extension
 
-> Botón flotante inyectado en MercadoLibre que genera packs visuales, videos y más herramientas DS **con un solo click**. Sin copy-paste. Sin depender de la API pública de MeLi.
+Extensión auxiliar del ecosistema DigitalSellers para ofrecer accesos desde publicaciones de Mercado Libre. El registro actual contiene el Simulador como integración futura y deshabilitada. No ofrece todavía generación de packs visuales o videos ni incorpora toda la plataforma PRO dentro del navegador.
+
+El estado vigente está en `PROJECT_CONTEXT.md`. Los datos de Mercado Libre deben respetar la política de fuentes de la raíz del ecosistema.
 
 [![Release](https://img.shields.io/github/v/release/sebardz/DigitalSellers-Extension?label=última%20versión&style=flat-square)](../../releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/sebardz/DigitalSellers-Extension/total?style=flat-square)](../../releases)
@@ -60,7 +62,11 @@ npm run pack
 El gate recomendado valida que `package.json` y `src/manifest.json` coincidan, corre iconos, lint, tests, typecheck y el pack canónico:
 
 ```powershell
-D:\CC\Agent-Master\local-workflows.ps1 -Workflow extension-release -Version 0.4.0
+npm run generate:icons
+npm run lint
+npm run test:run
+npm run typecheck
+npm run pack
 ```
 
 El comando sólo crea un ZIP local; no crea releases ni publica archivos. Revisar el artifact antes de cualquier distribución manual.

@@ -4,7 +4,7 @@ Extensión Chrome del ecosistema DigitalSellers. Su objetivo es ofrecer accesos 
 
 ## Estado actual
 
-- El Simulador permanece registrado como integración futura y está deshabilitado hasta contar con un scraper validado.
+- El Simulador permanece registrado como integración futura y está deshabilitado hasta contar con una integración validada y compatible con la política de fuentes del ecosistema.
 - No existe telemetría remota ni health check dependiente de servicios externos.
 - Los datos sólo se procesan después de una acción explícita del usuario.
 
